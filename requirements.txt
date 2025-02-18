@@ -1,0 +1,6 @@
+Flask
+psycopg2
+datetime
+flask-scss
+python-dotenv
+openpyxl
