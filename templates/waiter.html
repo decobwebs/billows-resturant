@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5" style="background-color: #fffcf8; padding: 20px; border-radius: 10px;">
+    <!-- Header -->
+    <h2 class="text-center mb-4" style="color: #c89e5c; font-size: 32px; font-weight: bold;">
+        Waiter Dashboard
+    </h2>
+
+    <!-- Download Button -->
+    <div class="text-center mb-4">
+        <a href="{{ url_for('download_served_orders') }}" class="btn shadow btn-hover"
+            style="background: #c89e5c; color: white; border-radius: 25px; padding: 12px 25px; font-size: 18px;">
+            Download Served Orders
+        </a>
+    </div>
+
+    <!-- Table Cards -->
+    <div class="row justify-content-center mb-4">
+        {% for table_number in range(1, 11) %}
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-lg text-center {% if glow_status[table_number|string] %} calling-table {% endif %}"
+                style="border-radius: 15px; padding: 15px; transition: 0.3s ease-in-out;
+                background: #ffffff; box-shadow: 6px 6px 12px #d1cdc7, -6px -6px 12px #ffffff;"
+                data-table="{{ table_number }}">
+                <div class="card-body">
+                    <h3 class="card-title" style="color: #c89e5c; font-size: 20px; font-weight: bold;">
+                        Table {{ table_number }}
+                    </h3>
+                    <form method="POST" action="{{ url_for('acknowledge_call', table_number=table_number) }}">
+                        <button type="submit" class="btn shadow btn-hover"
+                            style="background: #c89e5c; color: white; border-radius: 20px; padding: 8px 15px;">
+                            Acknowledge Call
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Display Orders for Each Table -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {% if grouped_tables %}
+                {% for table_number, table_orders in grouped_tables.items() %}
+                <div class="card mb-4 shadow-lg"
+                    style="border-radius: 15px; background: #ffffff; padding: 15px; box-shadow: 6px 6px 12px #d1cdc7, -6px -6px 12px #ffffff;">
+                    <div class="card-header text-white"
+                        style="background: #c89e5c; border-radius: 15px 15px 0 0; font-size: 18px; font-weight: bold;">
+                        Table {{ table_number }}
+                    </div>
+                    <div class="card-body">
+                        {% if table_orders %}
+                            <ul class="list-group">
+                                {% for order in table_orders %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    style="background: #ffffff; border-radius: 10px; padding: 15px; margin-bottom: 10px;
+                                    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);">
+                                    <div>
+                                        <strong style="color: #c89e5c;">{{ order.Item }}</strong> - Quantity: {{ order.Quantity }}
+                                        <br>
+                                        <small class="text-muted">Timestamp: {{ order.Timestamp }}</small>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <!-- Confirm Order Button -->
+                            <form method="POST" action="{{ url_for('confirm_order_route', table_number=table_number) }}" class="mt-3">
+                                <button type="submit" class="btn shadow btn-hover"
+                                    style="background: #28a745; color: white; border-radius: 25px; padding: 10px 20px; font-size: 16px;">
+                                    Confirm Orders
+                                </button>
+                            </form>
+                            <!-- Close Table Button -->
+                            <form method="POST" action="{{ url_for('close_table', table_number=table_number) }}" class="mt-3">
+                                <button type="submit" class="btn shadow btn-hover"
+                                    style="background: #ffc107; color: white; border-radius: 25px; padding: 10px 20px; font-size: 16px;">
+                                    Close Table
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="text-center" style="color: #c89e5c;">No orders for this table yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info text-center"
+                    style="border-radius: 10px; background: #ffffff; padding: 15px; box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);">
+                    No sent orders available.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Inline CSS for Improved Glowing and Vibrating Effect -->
+<style>
+@keyframes glowing {
+    0% { box-shadow: 0 0 10px red; transform: translate(0px, 0px); border: 2px solid red; }
+    25% { box-shadow: 0 0 25px red; transform: translate(-2px, 2px); border: 3px solid red; }
+    50% { box-shadow: 0 0 35px red; transform: translate(2px, -2px); border: 4px solid red; }
+    75% { box-shadow: 0 0 25px red; transform: translate(-2px, 2px); border: 3px solid red; }
+    100% { box-shadow: 0 0 10px red; transform: translate(0px, 0px); border: 2px solid red; }
+}
+
+/* Apply this class dynamically to tables that need attention */
+.calling-table {
+    animation: glowing 0.8s infinite ease-in-out;
+}
+
+/* Hover effect for buttons */
+.btn-hover:hover {
+    transform: scale(1.05);
+    transition: 0.3s ease-in-out;
+}
+</style>
+{% endblock %}

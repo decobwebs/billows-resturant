@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Download Served Orders</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="password" class="form-label">Enter Password:</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Download</button>
+</form>
+{% endblock %}

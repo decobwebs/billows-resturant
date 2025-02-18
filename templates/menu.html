@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>CaterServ - Catering Services Website Template</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playball&display=swap" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.css') }}" rel="stylesheet">
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <!-- Template Stylesheet -->
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+
+
+    <body>
+
+
+
+
+        <!-- Navbar start -->
+        <div class="container-fluid nav-bar">
+            <div class="container">
+                <nav class="navbar navbar-light navbar-expand-lg py-4">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="text-primary fw-bold mb-0">Cater<span class="text-dark">Serv</span> </h1>
+                    </a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav mx-auto">
+                            <div>
+
+                            </div>
+
+                        </div>
+                        <form method="POST" action="{{ url_for('call_waiter', table_number=table_number) }}">
+                            <button type="submit" class="btn btn-danger btn-lg shadow btn-hover">Call Waiter</button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar End -->
+
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control bg-transparent p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Hero Start -->
+        <div class="container-fluid bg-light py-6 my-6 mt-0">
+            <div class="container text-center animated bounceInDown">
+                <h1 class="display-1 mb-4">Menu</h1>
+
+            </div>
+        </div>
+        <!-- Hero End -->
+
+
+
+
+        {% block content %}
+        <div class="container mt-5" style="background-color: #fffcf8; padding: 20px; border-radius: 10px;">
+            <div class="col-md-8 offset-md-2">
+                <!-- Header -->
+                <h2 class="text-center mb-4 fade-in" style="color: #c89e5c; font-size: 32px; font-weight: bold;">
+                    Menu for Table {{ table_number }}
+                </h2>
+
+                <!-- Display Unsent Orders -->
+                <h3 class="mt-4 fade-in" style="color: #c89e5c; font-size: 24px; font-weight: bold;">Your Orders (Unsent)</h3>
+                {% if enumerated_unconfirmed_orders %}
+                <ul class="list-group shadow-sm slide-in" style="border-radius: 10px;">
+                    {% for index, order in enumerated_unconfirmed_orders %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        style="background: #ffffff; border-radius: 10px; padding: 15px; margin-bottom: 10px; box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);">
+                        <span style="font-size: 18px; font-weight: bold;">{{ order.Item }} x{{ order.Quantity }}</span>
+                        <form method="POST" class="d-inline">
+                            <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="index" value="{{ order.id }}"> <!-- Ensure this matches the order's ID -->
+                            <button type="submit" class="btn btn-danger btn-sm shadow-sm btn-hover">
+                                Remove
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center">No unsent orders yet.</p>
+                {% endif %}
+
+                <form method="POST" class="mt-3 text-center">
+                    <input type="hidden" name="action" value="send">
+                    <button type="submit" class="btn shadow btn-hover"
+                        style="background: #c89e5c; color: white; border-radius: 25px; padding: 12px 25px; font-size: 18px;"
+                        {% if not has_unconfirmed_orders %}disabled{% endif %}>
+                        Send Order
+                    </button>
+                </form>
+
+                <!-- Display Sent Orders -->
+                <h3 class="mt-4 fade-in" style="color: #c89e5c; font-size: 24px; font-weight: bold;">Sent Orders</h3>
+                {% if enumerated_confirmed_orders %}
+                <ul class="list-group shadow-sm slide-in">
+                    {% for index, order in enumerated_confirmed_orders %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        style="background: #ffffff; border-radius: 10px; padding: 15px; margin-bottom: 10px; box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);">
+                        <span style="font-size: 18px; font-weight: bold;">{{ order.Item }} x{{ order.Quantity }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center">No sent orders yet.</p>
+                {% endif %}
+
+                <!-- Toggle Buttons -->
+                <div class="text-center mt-4 fade-in">
+                    <button id="showDrinks" class="btn shadow btn-hover"
+                        style="border-radius: 25px; padding: 12px 20px; font-size: 16px; background: white; border: 2px solid #c89e5c; color: #c89e5c; margin-right: 10px;">
+                        Show Drinks
+                    </button>
+                    <button id="showFoods" class="btn shadow btn-hover"
+                        style="border-radius: 25px; padding: 12px 20px; font-size: 16px; background: white; border: 2px solid #c89e5c; color: #c89e5c;">
+                        Show Foods
+                    </button>
+                </div>
+
+                <!-- Drinks Section -->
+                <div id="drinksSection" class="mt-4 section fade-in">
+                    <h3 class="text-center mb-3" style="color: #c89e5c;">Drinks</h3>
+                    <div class="row">
+                        {% for drink in drinks %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card custom-card shadow-lg"
+                                style="background: #ffffff; border-radius: 15px; padding: 15px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title" style="color: #c89e5c;">{{ drink.name }}</h5>
+                                    <form method="POST" class="d-flex justify-content-center align-items-center mt-3">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="item" value="{{ drink.name }}">
+                                        <input type="hidden" name="price" value="{{ drink.price }}">
+                                        <input type="number" name="quantity" value="1" min="1"
+                                            class="form-control text-center quantity-input"
+                                            style="width: 60px; border-radius: 10px;">
+                                        <button type="submit" class="btn shadow btn-hover"
+                                            style="background: #c89e5c; color: white; border-radius: 20px; padding: 8px 15px; margin-left: 10px;">Add</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Foods Section -->
+                <div id="foodsSection" class="mt-4 section fade-in" style="display: none;">
+                    <h3 class="text-center mb-3" style="color: #c89e5c;">Foods</h3>
+                    <div class="row">
+                        {% for food in foods %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card custom-card shadow-lg"
+                                style="background: #ffffff; border-radius: 15px; padding: 15px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title" style="color: #c89e5c;">{{ food.name }}</h5>
+                                    <form method="POST" class="d-flex justify-content-center align-items-center mt-3">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="item" value="{{ food.name }}">
+                                        <input type="hidden" name="price" value="{{ food.price }}">
+                                        <input type="number" name="quantity" value="1" min="1"
+                                            class="form-control text-center quantity-input"
+                                            style="width: 60px; border-radius: 10px;">
+                                        <button type="submit" class="btn shadow btn-hover"
+                                            style="background: #c89e5c; color: white; border-radius: 20px; padding: 8px 15px; margin-left: 10px;">Add</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for Animations & Toggle -->
+        <script>
+        document.getElementById("showDrinks").addEventListener("click", function() {
+            document.getElementById("drinksSection").style.display = "block";
+            document.getElementById("foodsSection").style.display = "none";
+        });
+
+        document.getElementById("showFoods").addEventListener("click", function() {
+            document.getElementById("foodsSection").style.display = "block";
+            document.getElementById("drinksSection").style.display = "none";
+        });
+        </script>
+
+        {% endblock %}
+
+
+
+
+
+
+
+        <!-- Footer Start -->
+        <div class="container-fluid footer py-6 my-6 mb-0 bg-light wow bounceInUp" data-wow-delay="0.1s">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h1 class="text-primary">Cater<span class="text-dark">Serv</span></h1>
+                            <p class="lh-lg mb-4">There cursus massa at urnaaculis estieSed aliquamellus vitae ultrs condmentum leo massamollis its estiegittis miristum.</p>
+                            <div class="footer-icon d-flex">
+                                <a class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-primary btn-sm-square me-2 rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="btn btn-primary btn-sm-square me-2 rounded-circle"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="btn btn-primary btn-sm-square rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="mb-4">Contact Us</h4>
+                            <div class="d-flex flex-column align-items-start">
+                                <p><i class="fa fa-map-marker-alt text-primary me-2"></i> 123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt text-primary me-2"></i> (+012) 3456 7890 123</p>
+                                <p><i class="fas fa-envelope text-primary me-2"></i> info@example.com</p>
+                                <p><i class="fa fa-clock text-primary me-2"></i> 26/7 Hours Service</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright bg-dark py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right reserved.</span>
+                    </div>
+                    <div class="col-md-6 my-auto text-center text-md-end text-white">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
+                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-md-square btn-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/lightbox/js/lightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
+
+</html>

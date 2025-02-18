@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Bill for Table {{ table_number }}</h2>
+
+    <!-- Display Unconfirmed Orders -->
+    <h3 class="mt-4">Unconfirmed Orders</h3>
+    {% if unconfirmed_orders %}
+    <ul class="list-group">
+        {% for order in unconfirmed_orders %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ order.Item }} x{{ order.Quantity }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No unconfirmed orders yet.</p>
+    {% endif %}
+
+    <!-- Close Table Button -->
+    <form method="POST" action="{{ url_for('close_table', table_number=table_number) }}" class="mt-4 text-center">
+        <button type="submit" class="btn btn-warning">Close Table</button>
+    </form>
+</div>
+{% endblock %}

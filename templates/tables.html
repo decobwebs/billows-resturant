@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-6 offset-md-3 text-center">
+        <h2 class="mb-4">Tables</h2>
+        <p>Select a table to view or create orders:</p>
+
+        <!-- Links for 10 tables -->
+        <div class="list-group mb-4">
+            {% for table in range(1, 11) %}
+            <a href="{{ url_for('menu', table_number=table) }}" class="list-group-item list-group-item-action">
+                Table {{ table }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
