@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import send_file
 from io import BytesIO
 import csv
+import os
 
 from flask import Flask
 
@@ -24,26 +25,95 @@ app = Flask(__name__, static_folder="static")
 app.secret_key = 'your_secret_key'  # Required for session management
 
 # Database Configuration (Replace with your Render PostgreSQL credentials)
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env
+
 DB_CONFIG = {
-    'dbname': 'db2_96ym',  # Database name
-    'user': 'db2_96ym_user',  # Username
-    'password': 'vpVGNjgmuXYB9EwmGBgWtCyUBdoC74p9',  # Password
-    'host': 'dpg-cumutu9u0jms73b8o8hg-a.oregon-postgres.render.com',  # Hostname
-    'port': '5432'  # Default PostgreSQL port
+    'dbname': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'host': os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT'),
 }
 
 # Menu Data
 drinks = [
+    # Fresh Juices
     {"id": 31, "name": "Fresh Orange Juice", "category": "Fresh Juice", "price": 2000},
     {"id": 32, "name": "Watermelon Juice", "category": "Fresh Juice", "price": 2200},
-    {"id": 33, "name": "Chapman", "category": "Mocktail", "price": 2500},
+    {"id": 33, "name": "Mango Juice", "category": "Fresh Juice", "price": 2500},
+    {"id": 34, "name": "Pineapple Juice", "category": "Fresh Juice", "price": 2800},
+
+    # Smoothies
+    {"id": 35, "name": "Banana Smoothie", "category": "Smoothie", "price": 3000},
+
+    # Mocktails
+    {"id": 36, "name": "Chapman", "category": "Mocktail", "price": 2500},
+    {"id": 37, "name": "Virgin Mojito", "category": "Mocktail", "price": 2200},
+    {"id": 38, "name": "Virgin Daiquiri", "category": "Mocktail", "price": 2400},
+    {"id": 39, "name": "Ginger Beer", "category": "Mocktail", "price": 2000},
+    {"id": 40, "name": "Lemonade", "category": "Mocktail", "price": 1800},
+
+    # Alcoholic Beverages
+    {"id": 41, "name": "Hennessy VS", "category": "Cognac", "price": 10000},
+    {"id": 42, "name": "Martell VSOP", "category": "Cognac", "price": 12000},
+    {"id": 43, "name": "Remy Martin", "category": "Cognac", "price": 15000},
+    {"id": 44, "name": "Jameson", "category": "Whiskey", "price": 8000},
+    {"id": 45, "name": "Jack Daniel's", "category": "Whiskey", "price": 9000},
+    {"id": 46, "name": "Baileys", "category": "Aperitif", "price": 7000},
+    {"id": 47, "name": "Campari", "category": "Aperitif", "price": 6000},
+    {"id": 48, "name": "Gordon’s Gin", "category": "Gin", "price": 7000},
+    {"id": 49, "name": "Ciroc", "category": "Vodka", "price": 12000},
+    {"id": 50, "name": "Moët & Chandon", "category": "Wine", "price": 25000},
+
+    # Cocktails
+    {"id": 51, "name": "Margarita", "category": "Cocktail", "price": 5000},
+    {"id": 52, "name": "Mojito", "category": "Cocktail", "price": 4800},
+    {"id": 53, "name": "Pina Colada", "category": "Cocktail", "price": 5000},
+    {"id": 54, "name": "Tequila Sunrise", "category": "Cocktail", "price": 4500},
+    {"id": 55, "name": "Long Island Iced Tea", "category": "Cocktail", "price": 5500},
 ]
 
+
 foods = [
+    # Starters/Appetizers
     {"id": 1, "name": "Peppered Snail", "category": "Starter", "price": 4500},
     {"id": 2, "name": "Meat Pie", "category": "Starter", "price": 1200},
     {"id": 3, "name": "Spring Rolls", "category": "Starter", "price": 1500},
+    {"id": 4, "name": "Puff Puff", "category": "Starter", "price": 1000},
+    {"id": 5, "name": "Chicken Wings", "category": "Starter", "price": 3000},
+
+    # Main Course
+    {"id": 6, "name": "Jollof Rice & Chicken", "category": "Main Course", "price": 3000},
+    {"id": 7, "name": "Fried Rice & Turkey", "category": "Main Course", "price": 3500},
+    {"id": 8, "name": "Egusi Soup with Swallow", "category": "Main Course", "price": 3200},
+    {"id": 9, "name": "Ogbono Soup with Swallow", "category": "Main Course", "price": 3500},
+    {"id": 10, "name": "Afang Soup with Swallow", "category": "Main Course", "price": 3800},
+    {"id": 11, "name": "Banga Soup with Starch", "category": "Main Course", "price": 4000},
+    {"id": 12, "name": "Efo Riro with Swallow", "category": "Main Course", "price": 3000},
+    {"id": 13, "name": "Pounded Yam with Vegetable Soup", "category": "Main Course", "price": 3300},
+    {"id": 14, "name": "Amala with Ewedu & Gbegiri", "category": "Main Course", "price": 2800},
+    {"id": 15, "name": "Ofada Rice with Ayamase", "category": "Main Course", "price": 3700},
+    {"id": 16, "name": "Nkwobi", "category": "Main Course", "price": 4500},
+    {"id": 17, "name": "Isi Ewu (Goat Head)", "category": "Main Course", "price": 5500},
+    {"id": 18, "name": "Ewa Agoyin with Agege Bread", "category": "Main Course", "price": 2000},
+    {"id": 19, "name": "Moi Moi", "category": "Main Course", "price": 1800},
+    {"id": 20, "name": "Suya (Beef or Chicken)", "category": "Main Course", "price": 3000},
+    {"id": 21, "name": "Shawarma (Chicken or Beef)", "category": "Main Course", "price": 3500},
+    {"id": 22, "name": "Akara and Pap", "category": "Main Course", "price": 2200},
+    {"id": 23, "name": "Pepper Soup (Goat Meat)", "category": "Main Course", "price": 4200},
+    {"id": 24, "name": "Pepper Soup (Catfish)", "category": "Main Course", "price": 4500},
+    {"id": 25, "name": "Beans and Plantain", "category": "Main Course", "price": 2500},
+
+    # Desserts
+    {"id": 26, "name": "Chin Chin", "category": "Dessert", "price": 1200},
+    {"id": 27, "name": "Ice Cream (Vanilla/Chocolate)", "category": "Dessert", "price": 2000},
+    {"id": 28, "name": "Fruit Salad", "category": "Dessert", "price": 1800},
+    {"id": 29, "name": "Cake Slice", "category": "Dessert", "price": 2500},
+    {"id": 30, "name": "Puff Puff with Honey", "category": "Dessert", "price": 1500},
 ]
+
 
 # Helper function to connect to the database
 def get_db_connection():
