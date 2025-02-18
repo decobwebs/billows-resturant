@@ -1,6 +1,6 @@
 Flask
-psycopg2
-datetime
+gunicorn
+psycopg2-binary
 flask-scss
 python-dotenv
 openpyxl
