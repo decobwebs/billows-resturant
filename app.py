@@ -1,34 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask_scss import Scss
 import psycopg2
 from datetime import datetime
-from flask import send_file
 from io import BytesIO
 import csv
 import os
-
-from flask import Flask
-
-from flask_scss import Scss
-
-
-
-
-
-app = Flask(__name__)
-Scss(app, static_dir='static/css', asset_dir='static/scss')
-app = Flask(__name__, static_folder="static")
-app = Flask(__name__, static_folder="static")
-
-
-
-
-app.secret_key = 'your_secret_key'  # Required for session management
-
-# Database Configuration (Replace with your Render PostgreSQL credentials)
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env
+# Load environment variables from .env file
+load_dotenv()
 
+# Initialize Flask app
+app = Flask(__name__, static_folder="static")
+Scss(app, static_dir='static/css', asset_dir='static/scss')
+
+# Secret key for session management
+app.secret_key = 'your_secret_key'
+
+# Database Configuration (using environment variables)
 DB_CONFIG = {
     'dbname': os.getenv('DB_NAME'),
     'user': os.getenv('DB_USER'),
@@ -119,6 +108,7 @@ foods = [
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
 
+# Initialize the database tables
 def initialize_database():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -167,6 +157,7 @@ def initialize_database():
         cursor.close()
         conn.close()
 
+# Call the initialization function
 initialize_database()
 
 # Helper function to read orders from the database
@@ -212,17 +203,7 @@ def write_order(table_number, item, quantity, price, confirmed):
         conn.close()
 
 # Helper function to remove an order by index
-def remove_order(index):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute('DELETE FROM orders WHERE id = %s', (index,))
-        conn.commit()
-    except Exception as e:
-        print(f"Error removing order: {e}")
-    finally:
-        cursor.close()
-        conn.close()
+
 
 
 # Helper function to remove an order by index
